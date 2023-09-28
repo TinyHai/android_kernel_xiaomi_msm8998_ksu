@@ -1,0 +1,25 @@
+name: Build lineageOS Kernel
+on:
+  push:
+    branches:
+      - 13.0-sagit
+      
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3.5.2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Init Env
+        run:
+          sudo apt update && sudo apt install -y git-core gnupg flex bison build-essential zip curl zlib1g-dev libc6-dev-i386 libncurses5 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig binutils libgcc-11-dev python2 libc6-dev libssl-dev
+      - name: Run Build
+        run:
+          bash -x ./ci.sh
+      - name: Upload to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: testbuild
+          path: release/*.*
